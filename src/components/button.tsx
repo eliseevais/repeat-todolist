@@ -1,5 +1,8 @@
-import {ButtonPropsType} from "../types.ts";
+export type ButtonPropsType = {
+  title: string
+  onClick?: () => void
+}
 
-export const Button = ({ title }: ButtonPropsType) => {
-  return <button>{title}</button>
+export const Button = ({title, onClick}: ButtonPropsType) => {
+  return <button onClick={onClick}>{title}</button>
 }
