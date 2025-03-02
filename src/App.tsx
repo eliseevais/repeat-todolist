@@ -38,6 +38,14 @@ export const App = () => {
     setTasks(newTasks)
   }
 
+  const changeTaskStatus = (taskId: string, isDone: boolean) => {
+    const newState = tasks.map(
+      task => task.id == taskId
+        ? { ...task, isDone }
+        : task)
+    setTasks(newState)
+  }
+
   return (
     <div className="app">
       <TodolistItem title={"What to learn"}
@@ -45,6 +53,7 @@ export const App = () => {
                     date={"2025-02-28"}
                     removeTask={removeTask}
                     createTask={createTask}
+                    changeTaskStatus={changeTaskStatus}
       />
     </div>
   )
