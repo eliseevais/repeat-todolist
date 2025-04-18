@@ -1,28 +1,30 @@
-import type { FilterValues, Todolist } from "../app/App.tsx";
 import { createAction, createReducer, nanoid } from "@reduxjs/toolkit";
-
-const initialState: Todolist[] = [];
 
 export const deleteTodolistAC = createAction<{ id: string }>(
   "todolists/deleteTodolist"
 );
-
 export const createTodolistAC = createAction(
   "todolists/createTodolist",
   (title: string) => {
     return { payload: { title, id: nanoid() } };
   }
 );
-
 export const changeTodolistTitleAC = createAction<{
   id: string;
   title: string;
 }>("todolists/changeTodolistTitle");
-
+export type FilterValues = "all" | "active" | "completed";
 export const changeTodolistFilterAC = createAction<{
   id: string;
   filter: FilterValues;
 }>("todolists/changeTodolistFilter");
+
+export type Todolist = {
+  id: string;
+  title: string;
+  filter: FilterValues;
+};
+const initialState: Todolist[] = [];
 
 export const todolistsReducer = createReducer(initialState, (builder) => {
   builder
@@ -30,7 +32,7 @@ export const todolistsReducer = createReducer(initialState, (builder) => {
       const index = state.findIndex(
         (todolist) => todolist.id === action.payload.id
       );
-      if (index > -1) {
+      if (index !== -1) {
         state.splice(index, 1);
       }
     })
