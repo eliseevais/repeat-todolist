@@ -1,5 +1,4 @@
-import type { RootState } from "./store.ts";
-import { ThemeMode } from "./app-reducer.ts";
+import type {ThemeMode} from './app-reducer'
+import type {RootState} from './store'
 
-export const selectThemeMode = (state: RootState): ThemeMode =>
-  state.themeMode.themeMode;
+export const selectThemeMode = (state: RootState): ThemeMode => state.app.themeMode
