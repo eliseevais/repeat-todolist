@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Meta } from "@storybook/react";
-import { apiKey, token } from "@/common/instance/instance.ts";
 
 const settings = {
   withCredentials: true,
   headers: {
-    Authorization: `Bearer ${token}`,
-    "API-KEY": apiKey,
+    Authorization: `Bearer ${import.meta.env.VITE_AUTH_TOKEN}`,
+    "API-KEY": import.meta.env.VITE_API_KEY,
   },
 };
 
