@@ -6,8 +6,8 @@ import {
   createTodolistAC,
   deleteTodolistAC,
   type Todolist,
-  todolistsReducer,
-} from "../todolists-reducer";
+  todolistsSlice,
+} from "../todolists-slice.ts";
 
 let todolistId1: string;
 let todolistId2: string;
@@ -24,7 +24,7 @@ beforeEach(() => {
 });
 
 test("correct todolist should be deleted", () => {
-  const endState = todolistsReducer(
+  const endState = todolistsSlice(
     startState,
     deleteTodolistAC({ id: todolistId1 })
   );
@@ -35,7 +35,7 @@ test("correct todolist should be deleted", () => {
 
 test("correct todolist should be created", () => {
   const title = "New todolist";
-  const endState = todolistsReducer(startState, createTodolistAC(title));
+  const endState = todolistsSlice(startState, createTodolistAC(title));
 
   expect(endState.length).toBe(3);
   expect(endState[2].title).toBe(title);
@@ -43,7 +43,7 @@ test("correct todolist should be created", () => {
 
 test("correct todolist should change its title", () => {
   const title = "New title";
-  const endState = todolistsReducer(
+  const endState = todolistsSlice(
     startState,
     changeTodolistTitleAC({ id: todolistId2, title })
   );
@@ -54,7 +54,7 @@ test("correct todolist should change its title", () => {
 
 test("correct todolist should change its filter", () => {
   const filter = "completed";
-  const endState = todolistsReducer(
+  const endState = todolistsSlice(
     startState,
     changeTodolistFilterAC({ id: todolistId2, filter })
   );
