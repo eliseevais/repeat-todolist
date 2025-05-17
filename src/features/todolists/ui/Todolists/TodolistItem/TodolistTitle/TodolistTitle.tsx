@@ -1,30 +1,30 @@
-import { EditableSpan } from "@/common/components/EditableSpan/EditableSpan";
-import { useAppDispatch } from "@/common/hooks";
+import { EditableSpan } from "@/common/components"
+import { useAppDispatch } from "@/common/hooks"
 import {
   changeTodolistTitleTC,
   deleteTodolistTC,
-} from "@/features/todolists/model/todolists-slice.ts";
-import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
-import styles from "./TodolistTitle.module.css";
-import { Todolist } from "@/features/todolists/api/todolistsApi.types.ts";
+  type DomainTodolist,
+} from "@/features/todolists/model/todolists-slice"
+import DeleteIcon from "@mui/icons-material/Delete"
+import IconButton from "@mui/material/IconButton"
+import styles from "./TodolistTitle.module.css"
 
 type Props = {
-  todolist: Todolist;
-};
+  todolist: DomainTodolist
+}
 
 export const TodolistTitle = ({ todolist }: Props) => {
-  const { id, title } = todolist;
+  const { id, title } = todolist
 
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const deleteTodolist = () => {
-    dispatch(deleteTodolistTC(id));
-  };
+    dispatch(deleteTodolistTC(id))
+  }
 
   const changeTodolistTitle = (title: string) => {
-    dispatch(changeTodolistTitleTC({ id, title }));
-  };
+    dispatch(changeTodolistTitleTC({ id, title }))
+  }
 
   return (
     <div className={styles.container}>
@@ -35,5 +35,5 @@ export const TodolistTitle = ({ todolist }: Props) => {
         <DeleteIcon />
       </IconButton>
     </div>
-  );
-};
+  )
+}
