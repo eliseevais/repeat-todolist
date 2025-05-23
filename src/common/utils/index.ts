@@ -1,1 +1,1 @@
-export { createAppSlice } from "./createAppSlice";
+export { createAppSlice } from "./createAppSlice"

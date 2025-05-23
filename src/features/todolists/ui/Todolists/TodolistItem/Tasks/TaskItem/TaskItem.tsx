@@ -1,47 +1,43 @@
-import { EditableSpan } from "@/common/components/EditableSpan/EditableSpan";
-import { useAppDispatch } from "@/common/hooks";
-import {
-  changeTaskStatusTC,
-  changeTaskTitleTC,
-  deleteTaskTC,
-} from "@/features/todolists/model/tasks-slice";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import ListItem from "@mui/material/ListItem";
-import type { ChangeEvent } from "react";
-import { getListItemSx } from "./TaskItem.styles";
-import { DomainTask } from "@/features/todolists/api/tasksApi.types.ts";
-import { TaskStatus } from "@/common/enums";
+import { EditableSpan } from "@/common/components/EditableSpan/EditableSpan"
+import { TaskStatus } from "@/common/enums"
+import { useAppDispatch } from "@/common/hooks"
+import type { DomainTask } from "@/features/todolists/api/tasksApi.types"
+import { deleteTaskTC, updateTaskTC } from "@/features/todolists/model/tasks-slice"
+import DeleteIcon from "@mui/icons-material/Delete"
+import Checkbox from "@mui/material/Checkbox"
+import IconButton from "@mui/material/IconButton"
+import ListItem from "@mui/material/ListItem"
+import type { ChangeEvent } from "react"
+import { getListItemSx } from "./TaskItem.styles"
 
 type Props = {
-  task: DomainTask;
-  todolistId: string;
-};
+  task: DomainTask
+  todolistId: string
+}
 
 export const TaskItem = ({ task, todolistId }: Props) => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
   const deleteTask = () => {
-    dispatch(deleteTaskTC({ todolistId, taskId: task.id }));
-  };
+    dispatch(deleteTaskTC({ todolistId, taskId: task.id }))
+  }
 
   const changeTaskStatus = (e: ChangeEvent<HTMLInputElement>) => {
-    const newStatusValue = e.currentTarget.checked;
+    const newStatusValue = e.currentTarget.checked
     dispatch(
-      changeTaskStatusTC({
+      updateTaskTC({
         todolistId,
         taskId: task.id,
-        status: newStatusValue ? TaskStatus.Completed : TaskStatus.New,
-      })
-    );
-  };
+        domainModel: { status: newStatusValue ? TaskStatus.Completed : TaskStatus.New },
+      }),
+    )
+  }
 
   const changeTaskTitle = (title: string) => {
-    dispatch(changeTaskTitleTC({ todolistId, taskId: task.id, title }));
-  };
+    dispatch(updateTaskTC({ todolistId, taskId: task.id, domainModel: { title } }))
+  }
 
-  const isTaskCompleted = task.status === TaskStatus.Completed;
+  const isTaskCompleted = task.status === TaskStatus.Completed
 
   return (
     <ListItem sx={getListItemSx(isTaskCompleted)}>
@@ -53,5 +49,5 @@ export const TaskItem = ({ task, todolistId }: Props) => {
         <DeleteIcon />
       </IconButton>
     </ListItem>
-  );
-};
+  )
+}
