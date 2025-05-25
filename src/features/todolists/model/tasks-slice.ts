@@ -1,15 +1,18 @@
 import { setAppStatusAC } from "@/app/app-slice";
 import type { RootState } from "@/app/store";
-import { createAppSlice } from "@/common/utils";
+import { ResultCode } from "@/common/enums";
+import {
+  createAppSlice,
+  handleServerAppError,
+  handleServerNetworkError,
+} from "@/common/utils";
 import { tasksApi } from "@/features/todolists/api/tasksApi";
-import type {
+import {
   DomainTask,
+  DomainTaskSchema,
   UpdateTaskModel,
 } from "@/features/todolists/api/tasksApi.types";
 import { createTodolistTC, deleteTodolistTC } from "./todolists-slice";
-import { ResultCode } from "@/common/enums";
-import { handleServerAppError } from "@/common/utils/handleServerAppError.ts";
-import { handleServerNetworkError } from "@/common/utils/handleServerNetworkError.ts";
 
 export const tasksSlice = createAppSlice({
   name: "tasks",
@@ -32,10 +35,11 @@ export const tasksSlice = createAppSlice({
         try {
           dispatch(setAppStatusAC({ status: "loading" }));
           const res = await tasksApi.getTasks(todolistId);
+          const tasks = DomainTaskSchema.array().parse(res.data.items);
           dispatch(setAppStatusAC({ status: "succeeded" }));
-          return { todolistId, tasks: res.data.items };
-        } catch (error) {
-          dispatch(setAppStatusAC({ status: "failed" }));
+          return { todolistId, tasks };
+        } catch (error: any) {
+          handleServerNetworkError(dispatch, error);
           return rejectWithValue(null);
         }
       },
@@ -60,8 +64,8 @@ export const tasksSlice = createAppSlice({
             handleServerAppError(res.data, dispatch);
             return rejectWithValue(null);
           }
-        } catch (error: any) {
-          handleServerNetworkError(error, dispatch);
+        } catch (error) {
+          handleServerNetworkError(dispatch, error);
           return rejectWithValue(null);
         }
       },
@@ -78,11 +82,16 @@ export const tasksSlice = createAppSlice({
       ) => {
         try {
           dispatch(setAppStatusAC({ status: "loading" }));
-          await tasksApi.deleteTask(payload);
-          dispatch(setAppStatusAC({ status: "succeeded" }));
-          return payload;
+          const res = await tasksApi.deleteTask(payload);
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(setAppStatusAC({ status: "succeeded" }));
+            return payload;
+          } else {
+            handleServerAppError(res.data, dispatch);
+            return rejectWithValue(null);
+          }
         } catch (error) {
-          dispatch(setAppStatusAC({ status: "failed" }));
+          handleServerNetworkError(dispatch, error);
           return rejectWithValue(null);
         }
       },
@@ -136,8 +145,8 @@ export const tasksSlice = createAppSlice({
             handleServerAppError(res.data, dispatch);
             return rejectWithValue(null);
           }
-        } catch (error: any) {
-          handleServerNetworkError(error, dispatch);
+        } catch (error) {
+          handleServerNetworkError(dispatch, error);
           return rejectWithValue(null);
         }
       },

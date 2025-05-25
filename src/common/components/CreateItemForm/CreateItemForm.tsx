@@ -1,37 +1,37 @@
-import { type ChangeEvent, type KeyboardEvent, useState } from "react";
-import TextField from "@mui/material/TextField";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import IconButton from "@mui/material/IconButton";
+import { type ChangeEvent, type KeyboardEvent, useState } from "react"
+import TextField from "@mui/material/TextField"
+import AddBoxIcon from "@mui/icons-material/AddBox"
+import IconButton from "@mui/material/IconButton"
 
 type Props = {
-  onCreateItem: (title: string) => void;
-  disabled?: boolean;
-};
+  onCreateItem: (title: string) => void
+  disabled?: boolean
+}
 
 export const CreateItemForm = ({ onCreateItem, disabled }: Props) => {
-  const [title, setTitle] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [title, setTitle] = useState("")
+  const [error, setError] = useState<string | null>(null)
 
   const createItemHandler = () => {
-    const trimmedTitle = title.trim();
+    const trimmedTitle = title.trim()
     if (trimmedTitle !== "") {
-      onCreateItem(trimmedTitle);
-      setTitle("");
+      onCreateItem(trimmedTitle)
+      setTitle("")
     } else {
-      setError("Title is required");
+      setError("Title is required")
     }
-  };
+  }
 
   const changeTitleHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.currentTarget.value);
-    setError(null);
-  };
+    setTitle(event.currentTarget.value)
+    setError(null)
+  }
 
   const createItemOnEnterHandler = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      createItemHandler();
+      createItemHandler()
     }
-  };
+  }
 
   return (
     <div>
@@ -46,13 +46,9 @@ export const CreateItemForm = ({ onCreateItem, disabled }: Props) => {
         onKeyDown={createItemOnEnterHandler}
         disabled={disabled}
       />
-      <IconButton
-        onClick={createItemHandler}
-        color={"primary"}
-        disabled={disabled}
-      >
+      <IconButton onClick={createItemHandler} color={"primary"} disabled={disabled}>
         <AddBoxIcon />
       </IconButton>
     </div>
-  );
-};
+  )
+}
