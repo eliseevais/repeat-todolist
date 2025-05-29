@@ -1,1 +1,1 @@
-export * from "./loginSchema.ts";
+export * from "./loginSchema"

@@ -1,15 +1,25 @@
-import { useAppDispatch } from "@/common/hooks"
-import { CreateItemForm } from "@/common/components/CreateItemForm/CreateItemForm"
-import { createTodolistTC } from "@/features/todolists/model/todolists-slice"
-import { Todolists } from "@/features/todolists/ui/Todolists/Todolists"
-import Container from "@mui/material/Container"
-import Grid from "@mui/material/Grid2"
+import { useAppDispatch, useAppSelector } from "@/common/hooks";
+import { CreateItemForm } from "@/common/components/CreateItemForm/CreateItemForm";
+import { createTodolistTC } from "@/features/todolists/model/todolists-slice";
+import { Todolists } from "@/features/todolists/ui/Todolists/Todolists";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid2";
+import { selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts";
+import { Navigate } from "react-router-dom";
+import { Path } from "@/common/routing";
 
 export const Main = () => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
+  console.log("isLoggedIn:", isLoggedIn);
 
   const createTodolist = (title: string) => {
-    dispatch(createTodolistTC(title))
+    dispatch(createTodolistTC(title));
+  };
+
+  if (!isLoggedIn) {
+    return <Navigate to={Path.Login} />;
   }
 
   return (
@@ -21,5 +31,5 @@ export const Main = () => {
         <Todolists />
       </Grid>
     </Container>
-  )
-}
+  );
+};

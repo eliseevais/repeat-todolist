@@ -1,6 +1,8 @@
 import { selectThemeMode } from "@/app/app-slice";
-import { useAppSelector } from "@/common/hooks";
+import { useAppDispatch, useAppSelector } from "@/common/hooks";
 import { getTheme } from "@/common/theme";
+import { type Inputs, loginSchema } from "@/features/auth/lib/schemas";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
@@ -9,13 +11,17 @@ import FormGroup from "@mui/material/FormGroup";
 import FormLabel from "@mui/material/FormLabel";
 import Grid from "@mui/material/Grid2";
 import TextField from "@mui/material/TextField";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import styles from "./Login.module.css";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Inputs, loginSchema } from "@/features/auth/lib/schemas";
+import { loginTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts";
+import { Navigate } from "react-router";
+import { Path } from "@/common/routing";
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode);
+  const dispatch = useAppDispatch();
+  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+  const theme = getTheme(themeMode);
 
   const {
     register,
@@ -28,12 +34,14 @@ export const Login = () => {
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  const theme = getTheme(themeMode);
-
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    dispatch(loginTC(data));
     reset();
   };
+
+  if (isLoggedIn) {
+    return <Navigate to={Path.Main} />;
+  }
 
   return (
     <Grid container justifyContent={"center"}>
@@ -75,16 +83,22 @@ export const Login = () => {
               type="password"
               label="Password"
               margin="normal"
+              error={!!errors.email}
               {...register("password")}
             />
+            {errors.password && (
+              <span className={styles.errorMessage}>
+                {errors.password.message}
+              </span>
+            )}
             <FormControlLabel
               label={"Remember me"}
               control={
                 <Controller
                   name={"rememberMe"}
                   control={control}
-                  render={({ field: { value, ...rest } }) => (
-                    <Checkbox {...rest} checked={value} />
+                  render={({ field: { value, ...field } }) => (
+                    <Checkbox {...field} checked={value} />
                   )}
                 />
               }
