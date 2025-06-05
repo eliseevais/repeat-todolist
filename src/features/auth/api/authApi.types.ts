@@ -1,6 +1,5 @@
-export type LoginArgs = {
-  email: string;
-  password: string;
-  rememberMe?: boolean;
-  captcha?: string;
-};
+import type { Inputs } from "@/features/auth/lib/schemas"
+
+export type LoginArgs = Inputs & {
+  captcha?: string
+}

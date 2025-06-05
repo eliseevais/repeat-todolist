@@ -1,4 +1,4 @@
-import { selectThemeMode } from "@/app/app-slice";
+import { selectThemeMode, setIsLoggedInAC } from "@/app/app-slice";
 import { useAppDispatch, useAppSelector } from "@/common/hooks";
 import { getTheme } from "@/common/theme";
 import { type Inputs, loginSchema } from "@/features/auth/lib/schemas";
@@ -13,14 +13,17 @@ import Grid from "@mui/material/Grid2";
 import TextField from "@mui/material/TextField";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import styles from "./Login.module.css";
-import { loginTC, selectIsLoggedIn } from "@/features/auth/model/auth-slice.ts";
-import { Navigate } from "react-router";
-import { Path } from "@/common/routing";
+import { useLoginMutation } from "@/features/auth/api/authApi.ts";
+import { ResultCode } from "@/common/enums";
+import { AUTH_TOKEN } from "@/common/constants";
 
 export const Login = () => {
   const themeMode = useAppSelector(selectThemeMode);
+
   const dispatch = useAppDispatch();
-  const isLoggedIn = useAppSelector(selectIsLoggedIn);
+
+  const [login] = useLoginMutation();
+
   const theme = getTheme(themeMode);
 
   const {
@@ -35,13 +38,14 @@ export const Login = () => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    dispatch(loginTC(data));
-    reset();
+    login(data).then((res) => {
+      if (res.data?.resultCode === ResultCode.Success) {
+        dispatch(setIsLoggedInAC({ isLoggedIn: true }));
+        localStorage.setItem(AUTH_TOKEN, res.data.data.token);
+        reset();
+      }
+    });
   };
-
-  if (isLoggedIn) {
-    return <Navigate to={Path.Main} />;
-  }
 
   return (
     <Grid container justifyContent={"center"}>
