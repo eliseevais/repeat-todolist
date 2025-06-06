@@ -1,1 +1,1 @@
-export type { FilterValues, DomainTodolist } from "./types";
+export * from "./types"

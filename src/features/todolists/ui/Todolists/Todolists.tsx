@@ -1,13 +1,16 @@
+import { containerSx } from "@/common/styles";
 import { useGetTodolistsQuery } from "@/features/todolists/api/todolistsApi";
+import Box from "@mui/material/Box";
+import { TodolistSkeleton } from "./TodolistSkeleton/TodolistSkeleton";
 import Grid from "@mui/material/Grid2";
 import Paper from "@mui/material/Paper";
 import { TodolistItem } from "./TodolistItem/TodolistItem";
-import { containerSx } from "@/common/styles";
-import Box from "@mui/material/Box";
-import { TodolistSkeleton } from "@/features/todolists/ui/Todolists/TodolistSkeleton/TodolistSkeleton.tsx";
 
 export const Todolists = () => {
-  const { data: todolists, isLoading } = useGetTodolistsQuery();
+  const { data: todolists, isLoading } = useGetTodolistsQuery(undefined, {
+    pollingInterval: 3000,
+    skipPollingIfUnfocused: true,
+  });
 
   if (isLoading) {
     return (

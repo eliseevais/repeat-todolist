@@ -1,9 +1,11 @@
 import { TaskStatus } from "@/common/enums";
 import { useGetTasksQuery } from "@/features/todolists/api/tasksApi";
+import type { DomainTodolist } from "@/features/todolists/lib/types";
 import List from "@mui/material/List";
 import { TaskItem } from "./TaskItem/TaskItem";
-import { TasksSkeleton } from "@/features/todolists/ui/Todolists/TodolistItem/Tasks/TasksSkeleton/TasksSkeleton.tsx";
-import { DomainTodolist } from "@/features/todolists/lib/types";
+import { TasksSkeleton } from "./TasksSkeleton/TasksSkeleton";
+import { useState } from "react";
+import { TasksPagination } from "@/features/todolists/ui/Todolists/TodolistItem/Tasks/TasksPagination/TasksPagination.tsx";
 
 type Props = {
   todolist: DomainTodolist;
@@ -12,7 +14,14 @@ type Props = {
 export const Tasks = ({ todolist }: Props) => {
   const { id, filter } = todolist;
 
-  const { data, isLoading } = useGetTasksQuery(id);
+  const [page, setPage] = useState(1);
+
+  const { data, currentData, isLoading, isFetching } = useGetTasksQuery({
+    todolistId: id,
+    params: { page: page },
+  });
+
+  console.log({ data, currentData, isFetching });
 
   let filteredTasks = data?.items;
   if (filter === "active") {
@@ -25,6 +34,7 @@ export const Tasks = ({ todolist }: Props) => {
       (task) => task.status === TaskStatus.Completed
     );
   }
+
   if (isLoading) {
     return <TasksSkeleton />;
   }
@@ -34,11 +44,18 @@ export const Tasks = ({ todolist }: Props) => {
       {filteredTasks?.length === 0 ? (
         <p>Тасок нет</p>
       ) : (
-        <List>
-          {filteredTasks?.map((task) => (
-            <TaskItem key={task.id} task={task} todolist={todolist} />
-          ))}
-        </List>
+        <>
+          <List>
+            {filteredTasks?.map((task) => (
+              <TaskItem key={task.id} task={task} todolist={todolist} />
+            ))}
+          </List>
+          <TasksPagination
+            totalCount={data?.totalCount || 0}
+            page={page}
+            setPage={setPage}
+          />
+        </>
       )}
     </>
   );
